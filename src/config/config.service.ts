@@ -73,7 +73,7 @@ export class ConfigService<T extends DefaultConfig> {
 
     if (errors.length > 0) {
       throw new Error(
-        `${errors.map((e) => e.property).join(', ')} fields are invalid`,
+        `Invalid ENV fields: ${errors.map((e) => e.property).join(', ')}`,
       );
     }
 
