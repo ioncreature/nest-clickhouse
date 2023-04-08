@@ -26,3 +26,5 @@ Stop ClickHouse
 ```bash
 $ make down
 ```
+
+By default app is listening on http://localhost:3000
