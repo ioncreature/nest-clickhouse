@@ -1,8 +1,57 @@
 <html lang="en">
   <head>
     <title>Nest+ClickHouse</title>
+    <style>
+      .box {
+        border: 1px solid gray;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      p {
+        margin: 0;
+        padding: 0 0 5px 0;
+      }
+    </style>
   </head>
   <body>
     <h2>Nest + ClickHouse</h2>
+
+    <div class="box">
+      <p>send data to ClickHouse</p>
+      <label for="scope">scope </label
+      ><select id="scope">
+        <option value="index.title">index.title</option>
+        <option value="index.get-price">index.get-price</option>
+        <option value="feedback.comment.send">feedback.comment.send</option>
+        <option value="feedback.rate">feedback.rate</option>
+      </select>
+      <button onclick="selectRandomScope()">Send</button>
+    </div>
+    <script>
+      selectRandomScope();
+      function selectRandomScope() {
+        const scopeSelect = document.querySelector('#scope');
+        const length = scopeSelect.children.length;
+        const selectedIndex = Math.floor(Math.random() * length);
+        scopeSelect.children[selectedIndex].selected = true;
+      }
+    </script>
+
+    <div class="box">
+      <p>get data from ClickHouse</p>
+      <button onclick="getData()">get data</button>
+      <div id="data" style="padding: 20px 0 0 0">- no data -</div>
+    </div>
+    <script>
+      function getData() {
+        console.log('TODO: get data from api');
+        writeDataToPage({ total: 531 });
+      }
+
+      function writeDataToPage(data) {
+        const dataEl = document.querySelector('#data');
+        dataEl.innerText = `Total: ${data.total}`;
+      }
+    </script>
   </body>
 </html>
