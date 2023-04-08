@@ -25,10 +25,16 @@
         <option value="feedback.comment.send">feedback.comment.send</option>
         <option value="feedback.rate">feedback.rate</option>
       </select>
-      <button onclick="selectRandomScope()">Send</button>
+      <button onclick="sendData()">Send</button>
     </div>
     <script>
       selectRandomScope();
+
+      function sendData() {
+        console.log('TODO send data to api');
+        selectRandomScope();
+      }
+
       function selectRandomScope() {
         const scopeSelect = document.querySelector('#scope');
         const length = scopeSelect.children.length;
