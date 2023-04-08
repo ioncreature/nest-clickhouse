@@ -10,14 +10,10 @@ export interface UsageRecord {
 }
 
 @Injectable()
-export class StuffService {
+export class InteractionsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
-  async addUsageRecord(data: UsageRecord | UsageRecord[]): Promise<QueryResult> {
+  async addUsage(data: UsageRecord | UsageRecord[]): Promise<QueryResult> {
     const now = Date.now();
     const rows = Array.isArray(data) ? data : [data];
     return this.clickHouseService.insert(
@@ -26,5 +22,9 @@ export class StuffService {
         return { ...row, ts: now };
       }),
     );
+  }
+
+  async getUsage(): Promise<void> {
+    throw new Error('not implemented');
   }
 }

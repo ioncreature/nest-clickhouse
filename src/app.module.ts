@@ -4,14 +4,14 @@ import { AppConfig } from './app.config';
 import { ClickHouseModule } from './clickhouse/clickhouse.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { StuffModule } from './stuff/stuff.module';
+import { InteractionsModule } from './interactions/interactions.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(AppConfig),
     ClickHouseModule,
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'client') }),
-    StuffModule,
+    InteractionsModule,
   ],
 })
 export class AppModule {}
