@@ -1,16 +1,22 @@
-up: run-services
+init: install up
+
+install:
+	npm i
+
+up:
+	docker-compose -f docker-compose.yml up -d
 
 down:
 	docker-compose down --remove-orphans
-
-run-services:
-	docker-compose -f docker-compose.yml up -d
 
 audit:
 	npm audit --audit-level=critical
 
 start:
 	npm start
+
+dev:
+	npm run start:dev
 
 # Code style
 lint-fix:
