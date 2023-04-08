@@ -1,6 +1,7 @@
 <html lang="en">
   <head>
     <title>Nest+ClickHouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       .box {
         border: 1px solid gray;
@@ -17,21 +18,27 @@
     <h2>Nest + ClickHouse</h2>
 
     <div class="box">
-      <p>send data to ClickHouse</p>
-      <label for="scope">scope </label
-      ><select id="scope">
-        <option value="index.title">index.title</option>
-        <option value="index.get-price">index.get-price</option>
-        <option value="feedback.comment.send">feedback.comment.send</option>
-        <option value="feedback.rate">feedback.rate</option>
+      <p>Send data to ClickHouse</p>
+      <label for="scope">scope</label>
+      <select id="scope" data-dtu="Scope">
+        <option>index.title</option>
+        <option>index.get-price</option>
+        <option>feedback.comment.send</option>
+        <option>feedback.rate</option>
       </select>
-      <button onclick="sendData()">Send</button>
+      <button onclick="sendData()" data-dtu>Send data</button>
     </div>
+    <div class="box">
+      <p>Get data from ClickHouse</p>
+      <button onclick="getData()" data-dtu>Get data</button>
+      <div id="data" style="padding: 20px 0 0 0">- no data -</div>
+    </div>
+
     <script>
       selectRandomScope();
 
-      function sendData() {
-        console.log('TODO send data to api');
+      function sendData(data) {
+        console.log('TODO send data to api', data);
         selectRandomScope();
       }
 
@@ -41,14 +48,7 @@
         const selectedIndex = Math.floor(Math.random() * length);
         scopeSelect.children[selectedIndex].selected = true;
       }
-    </script>
 
-    <div class="box">
-      <p>get data from ClickHouse</p>
-      <button onclick="getData()">get data</button>
-      <div id="data" style="padding: 20px 0 0 0">- no data -</div>
-    </div>
-    <script>
       function getData() {
         console.log('TODO: get data from api');
         writeDataToPage({ total: 531 });
@@ -58,6 +58,19 @@
         const dataEl = document.querySelector('#data');
         dataEl.innerText = `Total: ${data.total}`;
       }
+    </script>
+
+    <!-- DTU back-end emulation -->
+    <script src="https://dotheyuse.com/src/db/dtu_db.js"></script>
+    <script src="https://dotheyuse.com/src/rx_api/dtu_rx_api.js"></script>
+    <!-- Client DTU JS SDK initialization -->
+    <script src="https://dotheyuse.com/src/customer/dtu_sdk_js/dtu_sdk.js"></script>
+    <script type="text/javascript">
+      const dtu = dotheyuse({
+        'ctag': 'DEMO MVP',
+        'topic': 'real usage',
+        // 'callback': console.log // uncomment and look what will happen on button click, dropdown option change
+      });
     </script>
   </body>
 </html>
