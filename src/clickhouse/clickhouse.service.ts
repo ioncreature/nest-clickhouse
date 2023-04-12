@@ -32,6 +32,10 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
     return this.client;
   }
 
+  async exec(query: string): Promise<QueryResult> {
+    return this.client.exec({ query });
+  }
+
   async insert<T extends Object>(table: string, rows: T[]): Promise<QueryResult> {
     const { CLICKHOUSE_DATABASE } = this.config.getConfig();
 
@@ -41,13 +45,14 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
 
     const fields = Object.keys(rows[0]);
     if (!fields.length) {
-      throw new Error('ClickHouseService#insert: empty rows list');
+      throw new Error('ClickHouseService#insert: no fields names provided');
     }
 
-    const fieldsValue = fields.join(',');
+    const fieldsValues = fields.join(',');
     const insertValues = rows.map((row) => `(${fields.map((f) => row[f]).join(',')}})`).join(',');
-    const query = `INSERT INTO ${CLICKHOUSE_DATABASE}.${table} (${fieldsValue}) VALUES ${insertValues}`;
 
-    return this.client.exec({ query });
+    return this.exec(
+      `INSERT INTO ${CLICKHOUSE_DATABASE}.${table} (${fieldsValues}) VALUES ${insertValues}`,
+    );
   }
 }

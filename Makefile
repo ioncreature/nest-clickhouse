@@ -12,6 +12,9 @@ down:
 audit:
 	npm audit --audit-level=critical
 
+build:
+	npm run build
+
 start:
 	npm start
 
