@@ -2,6 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ClickHouseService } from './clickhouse.service';
 import { ConfigService } from '../config/config.service';
 import { AppConfig } from '../app.config';
+import { readdir } from 'fs/promises';
+
+const nameRe = /^\d{10}-\w+\.ts$/;
+
+interface Migration {
+  name: string;
+}
 
 @Injectable()
 export class ClickhouseMigrationService {
@@ -37,11 +44,17 @@ export class ClickhouseMigrationService {
   }
 
   private async getMigrationsFromDb(): Promise<string[]> {
-    return []; // todo: implement
+    const migrations = await this.clickhouse.query<Migration[]>(
+      `SELECT * FROM migrations ORDER BY name`,
+    );
+    return migrations.map((m) => m.name);
   }
 
   private async getMigrationsFromFs(): Promise<string[]> {
-    return []; // todo: implement
+    const { CLICKHOUSE_MIGRATIONS } = this.config.getConfig();
+    const dirContent = await readdir(CLICKHOUSE_MIGRATIONS);
+
+    return dirContent.filter((name) => nameRe.test(name));
   }
 
   private async runMigrations(files: string[]): Promise<void> {

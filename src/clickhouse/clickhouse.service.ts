@@ -32,6 +32,11 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
     return this.client;
   }
 
+  async query<T>(query: string): Promise<T> {
+    const resultSet = await this.client.query({ query });
+    return resultSet.json<T>();
+  }
+
   async exec(query: string): Promise<QueryResult> {
     return this.client.exec({ query });
   }

@@ -8,4 +8,5 @@ export class AppConfig extends DefaultConfig {
   @IsString() CLICKHOUSE_DATABASE: string;
   @IsString() CLICKHOUSE_USER: string;
   @IsString() @IsOptional() CLICKHOUSE_PASSWORD: string;
+  @IsString() CLICKHOUSE_MIGRATIONS: string;
 }
