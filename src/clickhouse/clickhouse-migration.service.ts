@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ClickHouseService } from './clickhouse.service';
 import { ConfigService } from '../config/config.service';
 import { AppConfig } from '../app.config';
-import { readdir } from 'fs/promises';
+import { readdir, writeFile } from 'fs/promises';
+import { Migration } from './migration';
+import { join } from 'path';
 
 const nameRe = /^\d{10}-\w+\.ts$/;
 
-interface Migration {
+const scaffoldedClass = `
+export { Migration } from '../migration.ts';
+
+export class ConcreteMigration extends Migration {
+  async up(clickHouse: ClickHouseService) {}
+}
+`;
+
+interface MigrationRow {
   name: string;
 }
+
+export type GenericConstructor<T> = new () => T;
 
 @Injectable()
 export class ClickhouseMigrationService {
   constructor(
     private readonly config: ConfigService<AppConfig>,
     private readonly clickhouse: ClickHouseService,
+    private readonly logger: Logger,
   ) {}
 
   async createMigration(postfix: string): Promise<string> {
-    const ts = Math.floor(Date.now() / 1000);
-    const filename = `${ts}${postfix || ''}.ts`;
-    // todo: creates new file with scaffolded ts code for migration in migrations folder with properly ordered name
+    const { CLICKHOUSE_MIGRATIONS } = this.config.getConfig();
+    const tag = `${Math.floor(Date.now() / 1000)}${postfix || ''}`;
+    const filename = join(CLICKHOUSE_MIGRATIONS, `${tag}.ts`);
+    const content = scaffoldedClass.replace(/ConcreteMigration/gm, `Migration${tag}`);
+    await writeFile(filename, content);
     return filename;
   }
 
@@ -44,7 +59,7 @@ export class ClickhouseMigrationService {
   }
 
   private async getMigrationsFromDb(): Promise<string[]> {
-    const migrations = await this.clickhouse.query<Migration[]>(
+    const migrations = await this.clickhouse.query<MigrationRow[]>(
       `SELECT * FROM migrations ORDER BY name`,
     );
     return migrations.map((m) => m.name);
@@ -58,6 +73,26 @@ export class ClickhouseMigrationService {
   }
 
   private async runMigrations(files: string[]): Promise<void> {
-    // todo: implement
+    files.sort();
+    for (const name of files) {
+      const mod = require(name);
+      const migrationClass = findClass(mod);
+      if (!migrationClass) {
+        this.logger.error(`No migration class found for ${name}`);
+      }
+      const instance = new migrationClass();
+      this.logger.log(`Running ${name}`);
+      await instance.up(this.clickhouse);
+      this.logger.log(`Migration ${name} done`);
+    }
   }
+}
+
+function findClass(mod: any): GenericConstructor<Migration> | null {
+  for (const item in mod) {
+    if (mod[item] instanceof Migration) {
+      return mod[item];
+    }
+  }
+  return null;
 }

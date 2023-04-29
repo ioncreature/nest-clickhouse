@@ -1,10 +1,10 @@
 import { ClickHouseService } from './clickhouse.service';
 
-export interface MigrationInterface {
+export class Migration {
   /**
    * Run the migrations.
    */
-  up(clickHouse: ClickHouseService): Promise<any>;
+  async up(clickHouse: ClickHouseService): Promise<any> {}
 
   /**
    * Reverse the migrations.
