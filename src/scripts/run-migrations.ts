@@ -10,6 +10,7 @@ async function runMigrations() {
   const module = await Test.createTestingModule({
     imports: [ClickHouseModule, ConfigModule.forRoot(AppConfig)],
   }).compile();
+  await module.init();
   const migrationService = module.get<ClickhouseMigrationService>(ClickhouseMigrationService);
   await migrationService.doMigration();
 }

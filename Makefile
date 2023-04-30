@@ -30,3 +30,11 @@ lint:
 
 format-fix:
 	npx prettier --write "{src,test}/**/*.ts"
+
+# ClickHouse
+clickhouse-migrate:
+	npx ts-node -r tsconfig-paths/register src/scripts/run-migrations.ts
+
+clickhouse-generate:
+	npx ts-node -r tsconfig-paths/register src/scripts/generate-migration.ts -- --name=$(name)
+

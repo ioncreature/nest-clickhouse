@@ -2,12 +2,12 @@ import { ClickHouseService } from './clickhouse.service';
 
 export class Migration {
   /**
-   * Run the migrations.
+   * Run the migration
    */
   async up(clickHouse: ClickHouseService): Promise<any> {}
 
   /**
-   * Reverse the migrations.
+   * Reverse the migration
    */
   down?(clickHouse: ClickHouseService): Promise<any>;
 }
