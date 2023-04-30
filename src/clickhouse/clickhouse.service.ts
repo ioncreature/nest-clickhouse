@@ -34,9 +34,10 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
     return this.client;
   }
 
-  async query<T>(query: string): Promise<T> {
+  async query<T>(query: string): Promise<T[]> {
     const resultSet = await this.client.query({ query });
-    return resultSet.json<T>();
+    const json = await resultSet.json<{ data: T[] }>();
+    return json.data;
   }
 
   async exec(query: string): Promise<QueryResult> {
@@ -57,10 +58,10 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
     }
 
     const fieldsValues = fields.join(',');
-    const insertValues = rows.map((row) => `(${fields.map((f) => row[f]).join(',')}})`).join(',');
+    const insertValues = rows.map((row) => `(${fields.map((f) => row[f]).join(',')})`).join(',');
 
     return this.exec(
-      `INSERT INTO ${CLICKHOUSE_DATABASE}.${table} (${fieldsValues}) VALUES ${insertValues}`,
+      `INSERT INTO ${CLICKHOUSE_DATABASE}.${table} (${fieldsValues}) VALUES ${insertValues};`,
     );
   }
 }

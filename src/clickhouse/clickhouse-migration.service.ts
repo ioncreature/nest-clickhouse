@@ -46,7 +46,7 @@ export class ClickhouseMigrationService {
     const migrationsFromDb = await this.getMigrationsFromDb();
     const migrationsFromFs = await this.getMigrationsFromFs();
 
-    const maxFromDb = migrationsFromDb.reduce((res, cur) => (cur > res ? cur : res), null);
+    const maxFromDb = migrationsFromDb.reduce((res, cur) => (cur > res ? cur : res), '');
     const todoFromFs = migrationsFromFs.filter((name) => name > maxFromDb).sort();
 
     await this.runMigrations(todoFromFs);
@@ -61,7 +61,7 @@ export class ClickhouseMigrationService {
   }
 
   private async getMigrationsFromDb(): Promise<string[]> {
-    const migrations = await this.clickhouse.query<MigrationRow[]>(
+    const migrations = await this.clickhouse.query<MigrationRow>(
       `SELECT * FROM migrations ORDER BY name`,
     );
     return migrations.map((m) => m.name);
@@ -71,29 +71,40 @@ export class ClickhouseMigrationService {
     const { CLICKHOUSE_MIGRATIONS } = this.config.getConfig();
     const dirContent = await readdir(CLICKHOUSE_MIGRATIONS);
 
-    return dirContent.filter((name) => nameRe.test(name));
+    return dirContent
+      .filter((name) => nameRe.test(name))
+      .map((filename) => filename.replace('.ts', ''));
   }
 
   private async runMigrations(files: string[]): Promise<void> {
+    const { CLICKHOUSE_MIGRATIONS } = this.config.getConfig();
+
     files.sort();
     for (const name of files) {
-      const mod = require(name);
+      const mod = require(join(CLICKHOUSE_MIGRATIONS, name));
+
       const migrationClass = findClass(mod);
       if (!migrationClass) {
         this.logger.error(`No migration class found for ${name}`);
       }
+
       const instance = new migrationClass();
       this.logger.log(`Running ${name}`);
-      await instance.up(this.clickhouse);
-      await this.clickhouse.insert('migrations', [{ name }]);
-      this.logger.log(`Migration ${name} done`);
+      try {
+        await instance.up(this.clickhouse);
+        await this.clickhouse.insert('migrations', [{ name: `'${name}'` }]);
+        this.logger.log(`Migration ${name} done`);
+      } catch (e) {
+        this.logger.error(`Migration ${name} has failed with error: ${e.message}`);
+        throw e;
+      }
     }
   }
 }
 
 function findClass(mod: any): GenericConstructor<Migration> | null {
   for (const item in mod) {
-    if (mod[item] instanceof Migration) {
+    if (mod[item] instanceof Function) {
       return mod[item];
     }
   }
