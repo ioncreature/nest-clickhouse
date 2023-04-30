@@ -56,7 +56,7 @@ export class ClickhouseMigrationService {
     const { CLICKHOUSE_DATABASE } = this.config.getConfig();
     await this.clickhouse.exec(`CREATE DATABASE IF NOT EXISTS ${CLICKHOUSE_DATABASE}`);
     await this.clickhouse.exec(
-      `CREATE TABLE ${CLICKHOUSE_DATABASE}.migrations (name String) ENGINE = MergeTree()`,
+      `CREATE TABLE IF NOT EXISTS ${CLICKHOUSE_DATABASE}.migrations (name String) ENGINE = MergeTree() ORDER BY name;`,
     );
   }
 
