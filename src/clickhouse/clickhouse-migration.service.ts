@@ -38,6 +38,7 @@ export class ClickhouseMigrationService {
     const filename = join(CLICKHOUSE_MIGRATIONS, `${tag}.ts`);
     const content = scaffoldedClass.replace(/ConcreteMigration/gm, `Migration${camelCase(tag)}`);
     await writeFile(filename, content);
+    this.logger.log(`Migration generated: ${filename}`);
     return filename;
   }
 
