@@ -4,8 +4,8 @@ Test Nest with ClickHouse service
 
 ## Installation
 
-```bash
-$ npm i
+```shell
+npm i
 ```
 
 ## Running the app
@@ -13,18 +13,31 @@ $ npm i
 First you need to copy `.env.example` to `.env`
 
 Start ClickHouse in Docker
-```bash
-$ make up
+```shell
+make up
 ```
 
 Run the service
-```bash
-$ make start
+```shell
+make start
 ```
 
 Stop ClickHouse
-```bash
-$ make down
+```shell
+make down
 ```
 
 By default app is listening on http://localhost:3000
+
+
+### Database
+
+Create migration
+```shell
+make clickhouse-generate name=<some-name>
+```
+
+Run migrations
+```shell
+make clickhouse-migrate
+```
