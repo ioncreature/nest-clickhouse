@@ -10,7 +10,7 @@ import { InteractionsModule } from './interactions/interactions.module';
   imports: [
     ConfigModule.forRoot(AppConfig),
     ClickHouseModule,
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'client') }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'client/dtu_app') }),
     InteractionsModule,
   ],
 })
