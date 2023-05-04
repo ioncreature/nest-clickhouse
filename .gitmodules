@@ -1,0 +1,3 @@
+[submodule "client/dtu_app"]
+	path = client/dtu_app
+	url = https://github.com/alexeyhimself/dtu_app.git
