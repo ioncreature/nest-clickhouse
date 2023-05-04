@@ -12,7 +12,7 @@ const nameRe = /^\d{10}-\w+\.ts$/;
 const scaffoldedClass = `import { ClickHouseService } from '../clickhouse.service';
 import { Migration } from '../migration';
 
-export class Migration1682867061Test extends Migration {
+export class ConcreteMigration extends Migration {
   async up(clickHouse: ClickHouseService) {}
 }
 `;
@@ -55,7 +55,7 @@ export class ClickhouseMigrationService {
 
   private async createDb() {
     const { CLICKHOUSE_DATABASE } = this.config.getConfig();
-    await this.clickhouse.exec(`CREATE DATABASE IF NOT EXISTS ${CLICKHOUSE_DATABASE}`);
+    await this.clickhouse.exec(`CREATE DATABASE IF NOT EXISTS ${CLICKHOUSE_DATABASE};`);
     await this.clickhouse.exec(
       `CREATE TABLE IF NOT EXISTS ${CLICKHOUSE_DATABASE}.migrations (name String) ENGINE = MergeTree() ORDER BY name;`,
     );
