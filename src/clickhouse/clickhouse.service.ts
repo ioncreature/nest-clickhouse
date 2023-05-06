@@ -58,7 +58,9 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
     }
 
     const fieldsValues = fields.join(',');
-    const insertValues = rows.map((row) => `(${fields.map((f) => row[f]).join(',')})`).join(',');
+    const insertValues = rows
+      .map((row) => `(${fields.map((f) => JSON.stringify(row[f]).replace(/"/g, "'")).join(',')})`)
+      .join(',');
 
     return this.exec(
       `INSERT INTO ${CLICKHOUSE_DATABASE}.${table} (${fieldsValues}) VALUES ${insertValues};`,

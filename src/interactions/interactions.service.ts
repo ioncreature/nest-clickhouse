@@ -1,30 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ClickHouseService } from '../clickhouse/clickhouse.service';
 import { QueryResult } from '@clickhouse/client/dist/connection';
+import { InteractionDto } from './interaction.dto';
 
-const TABLE_INTERACTIONS = 'interactions';
-
-export interface UsageRecord {
-  aid: string;
-  scope: string[];
-}
+const TABLE_INTERACTIONS = 'rx_data';
 
 @Injectable()
 export class InteractionsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
-  async addUsage(data: UsageRecord | UsageRecord[]): Promise<QueryResult> {
-    const now = Date.now();
+  async addInteraction(data: InteractionDto): Promise<QueryResult> {
     const rows = Array.isArray(data) ? data : [data];
-    return this.clickHouseService.insert(
-      TABLE_INTERACTIONS,
-      rows.map((row) => {
-        return { ...row, ts: now };
-      }),
-    );
-  }
-
-  async getUsage(): Promise<void> {
-    throw new Error('not implemented');
+    return this.clickHouseService.insert(TABLE_INTERACTIONS, rows);
   }
 }

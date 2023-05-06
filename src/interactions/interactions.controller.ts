@@ -1,20 +1,23 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, ValidationPipe } from '@nestjs/common';
 import { InteractionsService } from './interactions.service';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { SuccessResponseDTO } from '../utils/success-response.dto';
+import { InteractionDto } from './interaction.dto';
 
+@ApiTags('interactions')
 @Controller('interactions')
 export class InteractionsController {
   constructor(private readonly interactionsService: InteractionsService) {}
 
   @Post()
-  async sendUsage() {
-    await this.interactionsService.addUsage({ aid: 'test-app', scope: ['some', 'scope'] });
-    return 'ok';
-  }
-
-  @Get()
-  async getUsage() {
-    // const result = await this.interactionsService.getUsage();
-    return 'ok';
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SuccessResponseDTO,
+    description: 'Send single interaction',
+  })
+  async insertInteraction(@Body(new ValidationPipe()) interactionDto: InteractionDto) {
+    await this.interactionsService.addInteraction(interactionDto);
+    return { success: true };
   }
 }
 
@@ -88,7 +91,7 @@ INSERT INTO dtu.rx_reports (
 SELECT * FROM dtu.rx_reports WHERE 1=1
 AND ctag = 'DEMO MVP'
 AND topic = 'your real usage now'
-AND date_time >= 1681863554 
+AND date_time >= 1681863554
 AND date_time < 1681863555;
 
 // 2. Aggregation with count:
@@ -99,6 +102,6 @@ GROUP BY uid;
 
 // 3. SELECT distinct values:
 SELECT DISTINCT topic FROM dtu.rx_reports WHERE 1=1
-AND ctag = 'DEMO MVP' 
+AND ctag = 'DEMO MVP'
 ORDER BY ctag ASC;
 */
