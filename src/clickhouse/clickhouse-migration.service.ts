@@ -93,7 +93,7 @@ export class ClickhouseMigrationService {
       this.logger.log(`Running ${name}`);
       try {
         await instance.up(this.clickhouse);
-        await this.clickhouse.insert('migrations', [{ name: `'${name}'` }]);
+        await this.clickhouse.insert('migrations', [{ name: `${name}` }]);
         this.logger.log(`Migration ${name} done`);
       } catch (e) {
         this.logger.error(`Migration ${name} has failed with error: ${e.message}`);
