@@ -34,6 +34,11 @@ make up
 make clickhouse-generate name=init
 ```
 
+## Apply any non-applied Database migrations
+```
+make clickhouse-migrate
+```
+
 ## Working with the app
 ### Run the app
 ```shell
