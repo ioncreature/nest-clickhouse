@@ -44,7 +44,7 @@ make clickhouse-migrate
 ```shell
 make start
 ```
-By default app is listening on http://localhost:3000
+By default app is listening on http://localhost:80
 
 ### Stop the app
 ```shell
