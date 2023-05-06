@@ -4,8 +4,8 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SuccessResponseDTO } from '../utils/success-response.dto';
 import { InteractionDto } from './interaction.dto';
 
-@ApiTags('interactions')
-@Controller('interactions')
+@ApiTags('rx')
+@Controller('rx')
 export class InteractionsController {
   constructor(private readonly interactionsService: InteractionsService) {}
 
