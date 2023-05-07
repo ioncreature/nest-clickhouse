@@ -27,14 +27,34 @@ export class ApiController {
     return { success: true };
   }
 
-  @Get('select')
+  @Get('read')
   @ApiResponse({
     status: HttpStatus.OK,
     type: SuccessResponseDto,
-    description: 'Get some data',
+    description: 'Get some data from DB',
   })
   async readApi(@Query() query: GetSelectQuery) {
     return this.apiService.readApi(query);
+  }
+
+  @Get('read_distinct')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SuccessResponseDto,
+    description: 'Get some distinct data from DB',
+  })
+  async readDistinctApi(@Query() query: GetSelectQuery) {
+    return this.apiService.readDistinctApi(query);
+  }
+
+  @Get('read_aggregated')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SuccessResponseDto,
+    description: 'Read aggregated data from DB',
+  })
+  async readAggregatedApi(@Query() query: GetSelectQuery) {
+    return this.apiService.readAggregatedApi(query);
   }
 }
 

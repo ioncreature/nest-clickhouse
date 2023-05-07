@@ -11,7 +11,7 @@ import { APP_PIPE } from '@nestjs/core';
   imports: [
     ConfigModule.forRoot(AppConfig),
     ClickHouseModule,
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'client/dtu_app') }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'src/dtu_app') }),
     ApiModule,
   ],
   providers: [

@@ -16,8 +16,9 @@ export class ApiService {
   }
 
   async readApi(query: GetSelectQuery) {
-    let whereClause = "ctag = '${query.ctag}'";
-    whereClause = "ctag = 'DEMO MVP'"
+    let whereClause = " ctag = '${query.ctag}'";
+    for (let key in query)
+      whereClause += ` AND ` + key + ` = '` + query[key] + `'`;
 
     if (query.date_to) {
       whereClause += `AND date_time <= '${query.date_to}'`;
@@ -26,6 +27,22 @@ export class ApiService {
     if (query.date_from) {
       whereClause += `AND date_time >= '${query.date_from}'`;
     }
+
+    return this.clickHouseService.query<ApiDto[]>(
+      `SELECT * FROM dtu.rx_data WHERE ${whereClause};`,
+    );
+  }
+
+  async readDistinctApi(query: GetSelectQuery) {
+    let whereClause = "ctag = '${query.ctag}'";
+
+    return this.clickHouseService.query<ApiDto[]>(
+      `SELECT * FROM dtu.rx_data WHERE ${whereClause};`,
+    );
+  }
+
+  async readAggregatedApi(query: GetSelectQuery) {
+    let whereClause = "ctag = '${query.ctag}'";
 
     return this.clickHouseService.query<ApiDto[]>(
       `SELECT * FROM dtu.rx_data WHERE ${whereClause};`,
