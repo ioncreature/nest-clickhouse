@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ConfigService } from './config/config.service';
+import { AppConfig } from './app.config';
 
 process.on('uncaughtException', (err, origin) => {
   console.error(`Uncaught exception: ${err?.stack || err?.message || err}\nOrigin: ${origin}`);
@@ -26,6 +28,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger', app, document);
 
-  await app.listen(80); // here need to get from config instead of hardcode - i don't understand how
+  const config = await app.get<ConfigService<AppConfig>>(ConfigService);
+  const { HTTP_PORT } = config.getConfig();
+
+  await app.listen(HTTP_PORT);
 }
 bootstrap();
