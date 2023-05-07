@@ -16,7 +16,7 @@ export class InteractionsService {
   }
 
   async getInteractions(query: GetSelectQuery) {
-    let whereClause = "AND ctag = '${query.ctag}'";
+    let whereClause = "ctag = '${query.ctag}'";
 
     if (query.date_to) {
       whereClause += `AND date_time <= '${query.date_to}'`;
@@ -27,7 +27,7 @@ export class InteractionsService {
     }
 
     return this.clickHouseService.query<InteractionDto[]>(
-      `SELECT * FROM dtu.rx_data WHERE 1=1 ${whereClause};`,
+      `SELECT * FROM dtu.rx_data WHERE ${whereClause};`,
     );
   }
 }
