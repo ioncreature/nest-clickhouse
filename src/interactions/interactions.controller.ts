@@ -1,8 +1,15 @@
-import { Body, Controller, HttpStatus, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe } from '@nestjs/common';
 import { InteractionsService } from './interactions.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SuccessResponseDTO } from '../utils/success-response.dto';
 import { InteractionDto } from './interaction.dto';
+
+export type GetSelectQuery = {
+  ctag: string;
+  topic?: string;
+  date_from?: number;
+  date_to?: number;
+};
 
 @ApiTags('rx')
 @Controller('rx')
@@ -18,6 +25,16 @@ export class InteractionsController {
   async insertInteraction(@Body(new ValidationPipe()) interactionDto: InteractionDto) {
     await this.interactionsService.addInteraction(interactionDto);
     return { success: true };
+  }
+
+  @Get('select')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SuccessResponseDTO,
+    description: 'Get some data',
+  })
+  async getInteractions(@Query() query: GetSelectQuery) {
+    return this.interactionsService.getInteractions(query);
   }
 }
 
