@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe, Param } from '@nestjs/common';
 import { ApiService } from './api.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SuccessResponseDto } from '../utils/success-response.dto';
@@ -10,6 +10,10 @@ export type GetSelectQuery = {
   date_from?: number;
   date_to?: number;
 };
+
+interface SendDetailsDTO {
+  something_distinct: string;
+}
 
 @ApiTags('api')
 @Controller('api')
@@ -37,14 +41,17 @@ export class ApiController {
     return this.apiService.readApi(query);
   }
 
-  @Get('read_distinct')
+  @Get('read_distinct/:something_distinct')
   @ApiResponse({
     status: HttpStatus.OK,
     type: SuccessResponseDto,
     description: 'Get some distinct data from DB',
   })
-  async readDistinctApi(@Query() query: GetSelectQuery) {
-    return this.apiService.readDistinctApi(query);
+  async readDistinctApi(@Query() query: GetSelectQuery, @Param() params: SendDetailsDTO) {
+  //async readDistinctApi(@Query() query: GetSelectQuery) {
+    const result = this.apiService.readDistinctApi(query, params.something_distinct);
+    //console.log(result)
+    return result;
   }
 
   @Get('read_aggregated')
