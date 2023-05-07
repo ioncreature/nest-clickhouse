@@ -37,7 +37,7 @@ export class ApiService {
     let whereClause = `SELECT DISTINCT ${something_distinct} FROM dtu.rx_data WHERE `
     whereClause += `ctag = '${query.ctag}' `;
     //whereClause += `FORMAT JSONCompactColumns`;
-    //console.log(whereClause);
+    console.log(whereClause, query);
     
     const db_returned_improper_format = await this.clickHouseService.query(whereClause);
     let db_returned_proper_format = []; // to JSONCompactColumns https://clickhouse.com/docs/en/interfaces/formats#jsoncompactcolumns
