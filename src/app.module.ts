@@ -4,7 +4,7 @@ import { AppConfig } from './app.config';
 import { ClickHouseModule } from './clickhouse/clickhouse.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { InteractionsModule } from './interactions/interactions.module';
+import { ApiModule } from './api/api.module';
 import { APP_PIPE } from '@nestjs/core';
 
 @Module({
@@ -12,7 +12,7 @@ import { APP_PIPE } from '@nestjs/core';
     ConfigModule.forRoot(AppConfig),
     ClickHouseModule,
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'client/dtu_app') }),
-    InteractionsModule,
+    ApiModule,
   ],
   providers: [
     {

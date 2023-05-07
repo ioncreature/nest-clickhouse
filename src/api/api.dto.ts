@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class InteractionDto {
+export class ApiDto {
   @Expose()
   @ApiProperty({ type: String })
   ctag: string;
