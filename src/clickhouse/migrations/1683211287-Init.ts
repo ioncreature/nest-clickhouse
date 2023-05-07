@@ -6,22 +6,22 @@ export class Migration1683211287Init extends Migration {
     await clickHouse.exec(`
       CREATE TABLE IF NOT EXISTS dtu.rx_data (
         "ctag" String,
-        "dateTime" DateTime64(3, 'UTC'),
+        "date_time" DateTime64(3, 'UTC'),
         "element" String,
-        "elementPath" Array(String),
-        "elementType" String,
-        "eventType" String,
-        "pageTitle" String,
+        "element_path" Array(String),
+        "element_type" String,
+        "event_type" String,
+        "page_title" String,
         "topic" String,
         "uid" String,
-        "urlDomainName" String,
-        "urlParameters" String,
-        "urlPath" String,
-        "urlPort" String,
-        "urlScheme" String,
+        "url_domain_name" String,
+        "url_parameters" String,
+        "url_path" String,
+        "url_port" String,
+        "url_scheme" String,
         "value" String
       )
       ENGINE = MergeTree
-      ORDER BY "dateTime";`);
+      ORDER BY "date_time";`);
   }
 }

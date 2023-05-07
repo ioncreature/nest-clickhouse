@@ -4,8 +4,8 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SuccessResponseDTO } from '../utils/success-response.dto';
 import { InteractionDto } from './interaction.dto';
 
-@ApiTags('interactions')
-@Controller('interactions')
+@ApiTags('rx')
+@Controller('rx')
 export class InteractionsController {
   constructor(private readonly interactionsService: InteractionsService) {}
 
@@ -22,7 +22,7 @@ export class InteractionsController {
 }
 
 /*
-CREATE TABLE IF NOT EXISTS dtu.rx_reports (
+CREATE TABLE IF NOT EXISTS dtu.rx_data (
   "ctag" String,
   "date_time" DateTime64(3, 'UTC'),
   "element" String,
@@ -43,7 +43,7 @@ ENGINE = MergeTree
 ORDER BY "date_time";
 
 
-INSERT INTO dtu.rx_reports (
+INSERT INTO dtu.rx_data (
   "ctag", 
   "date_time", 
   "element", 
@@ -88,20 +88,20 @@ INSERT INTO dtu.rx_reports (
 // (the same for INSERT statements, now they are vulnerable)
 
 // 1. Simple SELECT:
-SELECT * FROM dtu.rx_reports WHERE 1=1
+SELECT * FROM dtu.rx_data WHERE 1=1
 AND ctag = 'DEMO MVP'
 AND topic = 'your real usage now'
 AND date_time >= 1681863554
 AND date_time < 1681863555;
 
 // 2. Aggregation with count:
-SELECT uid, COUNT(uid) as count FROM dtu.rx_reports WHERE 1=1
+SELECT uid, COUNT(uid) as count FROM dtu.rx_data WHERE 1=1
 AND ctag = 'DEMO MVP'
 AND topic = 'your real usage now'
 GROUP BY uid;
 
 // 3. SELECT distinct values:
-SELECT DISTINCT topic FROM dtu.rx_reports WHERE 1=1
+SELECT DISTINCT topic FROM dtu.rx_data WHERE 1=1
 AND ctag = 'DEMO MVP'
 ORDER BY ctag ASC;
 */

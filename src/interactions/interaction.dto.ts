@@ -7,8 +7,8 @@ export class InteractionDto {
   ctag: string;
 
   @Expose()
-  @ApiProperty({ type: Date })
-  dateTime: Date;
+  @ApiProperty({ type: Number })
+  date_time: Number;
 
   @Expose()
   @ApiProperty({ type: String })
@@ -16,19 +16,19 @@ export class InteractionDto {
 
   @Expose()
   @ApiProperty({ type: String, isArray: true })
-  elementPath: string[];
+  element_path: string[];
 
   @Expose()
   @ApiProperty({ type: String })
-  elementType: string;
+  element_type: string;
 
   @Expose()
   @ApiProperty({ type: String })
-  eventType: string;
+  event_type: string;
 
   @Expose()
   @ApiProperty({ type: String })
-  pageTitle: string;
+  page_title: string;
 
   @Expose()
   @ApiProperty({ type: String })
@@ -40,23 +40,23 @@ export class InteractionDto {
 
   @Expose()
   @ApiProperty({ type: String })
-  urlDomainName: string;
+  url_domain_name: string;
 
   @Expose()
   @ApiProperty({ type: String })
-  urlParameters: string;
+  url_parameters: string;
 
   @Expose()
   @ApiProperty({ type: String })
-  urlPath: string;
+  url_path: string;
 
   @Expose()
   @ApiProperty({ type: String })
-  urlPort: string;
+  url_port: string;
 
   @Expose()
   @ApiProperty({ type: String })
-  urlScheme: string;
+  url_scheme: string;
 
   @Expose()
   @ApiProperty({ type: String })

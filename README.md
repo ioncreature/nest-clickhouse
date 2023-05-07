@@ -34,12 +34,17 @@ make up
 make clickhouse-generate name=init
 ```
 
+## Apply any non-applied Database migrations
+```
+make clickhouse-migrate
+```
+
 ## Working with the app
 ### Run the app
 ```shell
 make start
 ```
-By default app is listening on http://localhost:3000
+By default app is listening on http://localhost:80
 
 ### Stop the app
 ```shell
