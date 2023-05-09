@@ -36,25 +36,7 @@ export class ApiService {
   }
 
   async readApi(query: GetSelectQuery) {
-    let whereClause = " ctag = '${query.ctag}'";
-    for (let key in query)
-      whereClause += ` AND ` + key + ` = '` + query[key] + `'`;
-
-    if (query.date_to) {
-      whereClause += `AND date_time <= '${query.date_to}'`;
-    }
-
-    if (query.date_from) {
-      whereClause += `AND date_time >= '${query.date_from}'`;
-    }
-
-    return this.clickHouseService.query<ApiDto[]>(
-      `SELECT * FROM dtu.rx_data WHERE ${whereClause};`,
-    );
-  }
-
-  async readDistinctApi(query: GetSelectQuery, something_distinct) {
-    let whereClause = `SELECT DISTINCT ${something_distinct} FROM dtu.rx_data WHERE `
+    let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE `
     whereClause += `ctag = '${query.ctag}' `;
     for (let key in query) {
       if (!['ctag', 'element_path', 'element_path_string'].includes(key))
@@ -62,8 +44,24 @@ export class ApiService {
       if (key == 'element_path_string')
         whereClause += `AND ` + key + ` like '` + query[key] + `%' `;
     }
+    whereClause += ` ORDER BY date_time ASC`;
     //console.log(whereClause, query);
-    return await this.clickHouseService.query(whereClause);;
+    return await this.clickHouseService.query(whereClause);
+  }
+
+  async readDistinctApi(query: GetSelectQuery, something_distinct) {
+    //let whereClause = `SELECT DISTINCT ${something_distinct} FROM dtu.rx_data WHERE `
+    let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE `
+    whereClause += `ctag = '${query.ctag}' `;
+    for (let key in query) {
+      if (!['ctag', 'element_path', 'element_path_string'].includes(key))
+        whereClause += `AND ` + key + ` = '` + query[key] + `' `;
+      if (key == 'element_path_string')
+        whereClause += `AND ` + key + ` like '` + query[key] + `%' `;
+    }
+    whereClause += ` ORDER BY date_time ASC`;
+    //console.log(whereClause, query);
+    return await this.clickHouseService.query(whereClause);
   }
 
   async readAggregatedApi(query: GetSelectQuery) {
