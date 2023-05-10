@@ -26,27 +26,33 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
 }
 
 function make_where_clause_from_query(query) {
-  let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE `
-  whereClause += `ctag = '${query.ctag}' `;
+  let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE`
+  whereClause += ` ctag = '${query.ctag}'`;
   for (let key in query) {
-    if (!['ctag', 'element_path_string', 'datetime_from', 'datetime_to'].includes(key))
-      whereClause += `AND ` + key + ` = '` + query[key] + `' `;
+    if (!['ctag', 'element_path_string', 'datetime_from', 'datetime_to', 'uids'].includes(key))
+      whereClause += ` AND ` + key + ` = '` + query[key] + `'`;
     if (key == 'element_path_string')
-      whereClause += `AND ` + key + ` like '` + query[key] + `%' `;
+      whereClause += ` AND ` + key + ` like '` + query[key] + `%'`;
     if (['datetime_from', 'datetime_to'].includes(key)) {
       if (query['datetime_from'] == query['datetime_to']) {
-        ; // means: everything, no time limited
+        continue; // means: no time limited
       }
       else {
         if (key == 'datetime_from')
-          whereClause += ` AND date_time >= ` + query['datetime_from'] + ` `;
+          whereClause += ` AND date_time >= ` + query['datetime_from'];
         if (key == 'datetime_to')
-          whereClause += ` AND date_time <= ` + query['datetime_to'] + ` `;
+          whereClause += ` AND date_time <= ` + query['datetime_to'];
+      }
+    }
+    if (key == 'uids') {
+      let uids = query[key];
+      if (uids != '[""]') {
+        whereClause += ` AND uid IN ('` + JSON.parse(query[key]).join("','") + `')`;
       }
     }
   }
   whereClause += ` ORDER BY date_time ASC`;
-  //console.log(whereClause)
+  console.log(whereClause)
   return whereClause;
 }
 
