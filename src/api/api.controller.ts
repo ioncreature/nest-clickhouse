@@ -20,7 +20,7 @@ interface SendDetailsDTO {
 export class ApiController {
   constructor(private readonly apiService: ApiService) {}
 
-  @Post()
+  @Post('submit')
   @ApiResponse({
     status: HttpStatus.OK,
     type: SuccessResponseDto,

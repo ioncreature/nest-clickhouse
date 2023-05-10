@@ -25,6 +25,31 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
   return enriched_rows;
 }
 
+function make_where_clause_from_query(query) {
+  let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE `
+  whereClause += `ctag = '${query.ctag}' `;
+  for (let key in query) {
+    if (!['ctag', 'element_path_string', 'datetime_from', 'datetime_to'].includes(key))
+      whereClause += `AND ` + key + ` = '` + query[key] + `' `;
+    if (key == 'element_path_string')
+      whereClause += `AND ` + key + ` like '` + query[key] + `%' `;
+    if (['datetime_from', 'datetime_to'].includes(key)) {
+      if (query['datetime_from'] == query['datetime_to']) {
+        ; // means: everything, no time limited
+      }
+      else {
+        if (key == 'datetime_from')
+          whereClause += ` AND date_time >= ` + query['datetime_from'] + ` `;
+        if (key == 'datetime_to')
+          whereClause += ` AND date_time <= ` + query['datetime_to'] + ` `;
+      }
+    }
+  }
+  whereClause += ` ORDER BY date_time ASC`;
+  //console.log(whereClause)
+  return whereClause;
+}
+
 @Injectable()
 export class ApiService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
@@ -36,30 +61,14 @@ export class ApiService {
   }
 
   async readApi(query: GetSelectQuery) {
-    let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE `
-    whereClause += `ctag = '${query.ctag}' `;
-    for (let key in query) {
-      if (!['ctag', 'element_path', 'element_path_string'].includes(key))
-        whereClause += `AND ` + key + ` = '` + query[key] + `' `;
-      if (key == 'element_path_string')
-        whereClause += `AND ` + key + ` like '` + query[key] + `%' `;
-    }
-    whereClause += ` ORDER BY date_time ASC`;
+    const whereClause = make_where_clause_from_query(query);
     //console.log(whereClause, query);
     return await this.clickHouseService.query(whereClause);
   }
 
   async readDistinctApi(query: GetSelectQuery, something_distinct) {
     //let whereClause = `SELECT DISTINCT ${something_distinct} FROM dtu.rx_data WHERE `
-    let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE `
-    whereClause += `ctag = '${query.ctag}' `;
-    for (let key in query) {
-      if (!['ctag', 'element_path', 'element_path_string'].includes(key))
-        whereClause += `AND ` + key + ` = '` + query[key] + `' `;
-      if (key == 'element_path_string')
-        whereClause += `AND ` + key + ` like '` + query[key] + `%' `;
-    }
-    whereClause += ` ORDER BY date_time ASC`;
+    const whereClause = make_where_clause_from_query(query);
     //console.log(whereClause, query);
     return await this.clickHouseService.query(whereClause);
   }
