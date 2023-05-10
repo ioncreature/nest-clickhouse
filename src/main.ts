@@ -17,11 +17,12 @@ process.on('unhandledRejection', (reason: any) => {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    //cors: false,
   });
 
   const options = new DocumentBuilder()
-    .setTitle('DTU API')
-    .setDescription('Swagger documentation for DTU API')
+    .setTitle('DoTheyUse Service API')
+    .setDescription('Swagger documentation for DoTheyUse Service API')
     .setVersion('1.0')
     .build();
 

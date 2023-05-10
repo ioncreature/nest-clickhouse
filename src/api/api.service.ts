@@ -16,12 +16,17 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
 
     if (!r.element_path)
       r.element_path = ['', r.element];
+    if (typeof(r.element_path) == 'string')
+      r.element_path = r.element_path.split(',');
     if (r.element_path[0] !== '')
       r.element_path.unshift(''); // add to the beginning as "all" elements for filter
+
+    r.value = r.value.split(',');
 
     r.element_path_string = String(r.element_path);
     enriched_rows.push(r);
   }
+  //console.log(data, enriched_rows)
   return enriched_rows;
 }
 
@@ -61,6 +66,8 @@ export class ApiService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
   async insertApi(data: ApiDto): Promise<QueryResult> {
+    let data_string = Object.keys(data)[0];
+    data = JSON.parse(data_string);
     const rows = Array.isArray(data) ? data : [data];
     const enriched_rows = enrich_rows(rows);
     return this.clickHouseService.insert(TABLE_INTERACTIONS, enriched_rows);
