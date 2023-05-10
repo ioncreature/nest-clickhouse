@@ -22,7 +22,7 @@ export class ClickHouseService implements OnModuleInit, OnApplicationShutdown {
       host: CLICKHOUSE_URL,
       username: CLICKHOUSE_USER,
       password: CLICKHOUSE_PASSWORD,
-      database: CLICKHOUSE_DATABASE,
+      //database: CLICKHOUSE_DATABASE,
     });
   }
 

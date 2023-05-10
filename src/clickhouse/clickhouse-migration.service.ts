@@ -62,8 +62,9 @@ export class ClickhouseMigrationService {
   }
 
   private async getMigrationsFromDb(): Promise<string[]> {
+    const { CLICKHOUSE_DATABASE } = this.config.getConfig();
     const migrations = await this.clickhouse.query<MigrationRow>(
-      `SELECT * FROM migrations ORDER BY name`,
+      `SELECT * FROM ${CLICKHOUSE_DATABASE}.migrations ORDER BY name`,
     );
     return migrations.map((m) => m.name);
   }
