@@ -23,6 +23,9 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
 
     r.value = r.value.split(',');
 
+    if (typeof(r.ugids) == 'string')
+      r.ugids = r.ugids.split(',');
+
     r.element_path_string = String(r.element_path);
     enriched_rows.push(r);
   }
@@ -34,7 +37,7 @@ function make_where_clause_from_query(query) {
   let whereClause = `SELECT toUnixTimestamp64Micro(date_time) / 1000 as date_time, element, element_path, element_path_string, element_type, topic, uid, url_domain_name, url_path, value FROM dtu.rx_data WHERE`
   whereClause += ` ctag = '${query.ctag}'`;
   for (let key in query) {
-    if (!['ctag', 'element_path_string', 'datetime_from', 'datetime_to', 'uids'].includes(key))
+    if (!['ctag', 'element_path_string', 'datetime_from', 'datetime_to', 'uids', 'ugids'].includes(key))
       whereClause += ` AND ` + key + ` = '` + query[key] + `'`;
     if (key == 'element_path_string')
       whereClause += ` AND ` + key + ` like '` + query[key] + `%'`;
@@ -55,6 +58,14 @@ function make_where_clause_from_query(query) {
         whereClause += ` AND uid IN ('` + JSON.parse(query[key]).join("','") + `')`;
       }
     }
+    if (key == 'ugids') {
+      let ugids = query[key];
+      //console.log(ugids, ugids == '[""]')
+      if (ugids != '[""]') {
+        ugids = JSON.parse(ugids);
+        whereClause += ` AND has(ugids, '` + ugids.join(',') + `')`;
+      }
+    }
   }
   whereClause += ` ORDER BY date_time ASC`;
   console.log(whereClause)
@@ -67,6 +78,7 @@ export class ApiService {
 
   async insertApi(data: ApiDto): Promise<QueryResult> {
     let data_string = Object.keys(data)[0];
+    console.log(data_string)
     data = JSON.parse(data_string);
     const rows = Array.isArray(data) ? data : [data];
     const enriched_rows = enrich_rows(rows);
