@@ -4,7 +4,7 @@ if [[ $# -eq 0 ]] ; then
     exit 0
 fi
 
-docker image rm dtu-rc &&
+docker image rm dtu-rc
 docker build --no-cache -t dtu-rc . &&
 
 docker tag dtu-rc alexeyhimself/dtu:$1 &&
