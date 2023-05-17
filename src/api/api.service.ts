@@ -64,7 +64,7 @@ function make_where_clause_from_query(query) {
       //console.log(ugids, ugids == '[""]')
       if (ugids != '[""]') {
         ugids = JSON.parse(ugids);
-        whereClause += ` AND has(ugids, '` + ugids.join(',') + `')`;
+        whereClause += ` AND hasAll(ugids, ['` + ugids.join('\',\'') + `'])`;
       }
     }
   }
