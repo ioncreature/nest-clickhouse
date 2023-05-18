@@ -21,7 +21,8 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
     if (r.element_path[0] !== '')
       r.element_path.unshift(''); // add to the beginning as "all" elements for filter
 
-    r.value = r.value.split(',');
+    if (r.value)
+      r.value = r.value.split(',');
 
     if (typeof(r.ugids) == 'string')
       r.ugids = r.ugids.split(',');
