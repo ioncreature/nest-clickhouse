@@ -31,6 +31,7 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
     enriched_rows.push(r);
   }
   //console.log(data, enriched_rows)
+  //console.warn("make element path to lower case both for rx and tx apis")
   return enriched_rows;
 }
 
