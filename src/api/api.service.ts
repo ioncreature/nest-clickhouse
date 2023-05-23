@@ -81,8 +81,8 @@ export class ApiService {
 
   async insertApi(data: ApiDto): Promise<QueryResult> {
     let data_string = Object.keys(data)[0];
-    console.log(2, data_string)
-    data = JSON.parse(data_string);
+    //console.log(2, data_string, decodeURIComponent(data_string))
+    data = JSON.parse(decodeURIComponent(data_string));
     const rows = Array.isArray(data) ? data : [data];
     const enriched_rows = enrich_rows(rows);
     return this.clickHouseService.insert(TABLE_INTERACTIONS, enriched_rows);
