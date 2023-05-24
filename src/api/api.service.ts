@@ -21,12 +21,15 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
     if (r.element_path[0] !== '')
       r.element_path.unshift(''); // add to the beginning as "all" elements for filter
 
-    if (r.value)
-      r.value = r.value.split(',');
+    if (r.value) {
+      r.value = atob(r.value);
+      r.value = r.value.replaceAll('\'', '"')
+    }
+    if (r.page_title)
+      r.page_title = atob(r.page_title);
 
     if (typeof(r.ugids) == 'string')
       r.ugids = r.ugids.split(',');
-    //delete r['ugids_string'];
 
     r.element_path_string = String(r.element_path);
     enriched_rows.push(r);
