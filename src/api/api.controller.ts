@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe, Param } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe, Param, Header } from '@nestjs/common';
 import { ApiService } from './api.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SuccessResponseDto } from '../utils/success-response.dto';
@@ -21,6 +21,9 @@ export class ApiController {
   constructor(private readonly apiService: ApiService) {}
 
   @Post('submit')
+  //@Header('content-type', 'application/x-www-form-urlencoded') 
+  // WARN [ExpressAdapter] Content-Type doesn't match Reply body, you might need a custom ExceptionFilter for non-JSON responses
+  // https://stackoverflow.com/questions/52531707/nest-js-post-setting-the-content-type-of-the-response
   @ApiResponse({
     status: HttpStatus.OK,
     type: SuccessResponseDto,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ClickHouseService } from '../clickhouse/clickhouse.service';
 import { QueryResult } from '@clickhouse/client/dist/connection';
 import { ApiDto } from './api.dto';
@@ -13,6 +13,13 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
 
     if (!r.topic)
       r.topic = "default";
+
+    if (r.element == '') {
+      const status = 'Bad request';
+      const description = 'Element can not be empty';
+      console.warn(status, description);
+      throw new BadRequestException(status, { cause: new Error(), description: description })
+    }
 
     if (!r.element_path)
       r.element_path = ['', r.element];
