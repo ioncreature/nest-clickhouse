@@ -8,6 +8,7 @@ const TABLE_INTERACTIONS = 'rx_data';
 
 function enrich_rows(data) { // enriching report with required data even if SDK didn't sent it
   let enriched_rows = [];
+
   for (let i in data) {
     let r = data[i];
 
@@ -28,15 +29,17 @@ function enrich_rows(data) { // enriching report with required data even if SDK 
     if (r.element_path[0] !== '')
       r.element_path.unshift(''); // add to the beginning as "all" elements for filter
 
-    if (r.value) {
-      r.value = atob(r.value);
-      r.value = r.value.replaceAll('\'', '"')
+    // replacing internal ' mark in strings like: 'Who's there'
+    for (let key in r) {
+      if (typeof(r[key]) == 'string')
+        r[key] = r[key].replace(/'/g, "''");
+      else {
+        for (let j in r[key]) {
+          r[key][j] = r[key][j].replace(/'/g, "''");
+        }
+      }
+      //console.log(r[key])
     }
-    if (r.page_title)
-      r.page_title = atob(r.page_title);
-
-    if (typeof(r.ugids) == 'string')
-      r.ugids = r.ugids.split(',');
 
     r.element_path_string = String(r.element_path);
     enriched_rows.push(r);
@@ -92,9 +95,10 @@ export class ApiService {
   async insertApi(data: ApiDto): Promise<QueryResult> {
     let data_string = Object.keys(data)[0];
     //console.log(2, data_string, decodeURIComponent(data_string))
-    data = JSON.parse(decodeURIComponent(data_string));
+    data = JSON.parse(atob(decodeURIComponent(data_string)));
     const rows = Array.isArray(data) ? data : [data];
     const enriched_rows = enrich_rows(rows);
+    console.error(10, enriched_rows)
     return this.clickHouseService.insert(TABLE_INTERACTIONS, enriched_rows);
   }
 
