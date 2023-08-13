@@ -3,6 +3,8 @@ import { ClickHouseService } from '../clickhouse/clickhouse.service';
 import { QueryResult } from '@clickhouse/client/dist/connection';
 import { ApiDto } from './api.dto';
 import { GetSelectQuery } from './api.controller';
+import { Base64 } from '../utils/base64';
+
 
 const TABLE_INTERACTIONS = 'rx_data';
 
@@ -94,11 +96,11 @@ export class ApiService {
 
   async insertApi(data: ApiDto): Promise<QueryResult> {
     let data_string = Object.keys(data)[0];
-    //console.log(2, data_string, decodeURIComponent(data_string))
-    data = JSON.parse(atob(decodeURIComponent(data_string)));
+    data_string = data_string.replace(/ /g, "+");
+    data = JSON.parse(Base64.decode(data_string));
     const rows = Array.isArray(data) ? data : [data];
     const enriched_rows = enrich_rows(rows);
-    console.error(10, enriched_rows)
+    //console.error(10, enriched_rows)
     return this.clickHouseService.insert(TABLE_INTERACTIONS, enriched_rows);
   }
 
