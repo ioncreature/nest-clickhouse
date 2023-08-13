@@ -97,7 +97,9 @@ export class ApiService {
   async insertApi(data: ApiDto): Promise<QueryResult> {
     let data_string = Object.keys(data)[0];
     data_string = data_string.replace(/ /g, "+");
-    data = JSON.parse(Base64.decode(data_string));
+    //console.log(data_string);
+    //console.log(Base64.decode(data_string));
+    data = JSON.parse(Base64.decode(data_string).replace(/\x00/g, '')); // remove sometimes trailing =/== in base64 encoding
     const rows = Array.isArray(data) ? data : [data];
     const enriched_rows = enrich_rows(rows);
     //console.error(10, enriched_rows)
