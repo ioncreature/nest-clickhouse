@@ -126,4 +126,8 @@ export class ApiService {
       `SELECT * FROM dtu.rx_data WHERE ${whereClause};`,
     );
   }
+
+  async replyPreflight() {
+    return 0;
+  }
 }

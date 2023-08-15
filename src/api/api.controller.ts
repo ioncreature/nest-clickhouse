@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe, Param, Header } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, ValidationPipe, Param, Header, Options } from '@nestjs/common';
 import { ApiService } from './api.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SuccessResponseDto } from '../utils/success-response.dto';
@@ -63,5 +63,16 @@ export class ApiController {
   })
   async readAggregatedApi(@Query() query: GetSelectQuery) {
     return this.apiService.readAggregatedApi(query);
+  }
+
+  @Options('submit')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SuccessResponseDto,
+    description: 'Reply on preflight request', // otherwise reply is HTTP 404
+  })
+  //async replyPreflight(@Query() query: GetSelectQuery) {
+  async replyPreflight() {
+    return this.apiService.replyPreflight();
   }
 }
